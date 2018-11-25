@@ -3,14 +3,15 @@
 
 nodes = {
     'controller'  => [1, 200],
-    'network'  => [1, 210],
-    'compute' => [1, 220],
+#    'network'  => [1, 210],
+#    'compute' => [1, 220],
 }
 
 Vagrant.configure("2") do |config|
   config.vm.box = "box/base.box"
+  config.ssh.password = "vagrant"
   config.ssh.insert_key = false
-  config.ssh.private_key_path = "pem/id_rsa"
+  #config.ssh.private_key_path = "pem/id_rsa"
 
   nodes.each do |prefix, (count, ip_start)|
     count.times do |i|
