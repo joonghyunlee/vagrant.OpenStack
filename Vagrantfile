@@ -46,6 +46,9 @@ Vagrant.configure("2") do |config|
 
           vbox.customize ["modifyvm", :id, "--nicpromisc3", "allow-all"]
         end
+
+        config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
+        config.vm.provision :shell, privileged: true, path: 'controller.sh'
       end
     end
   end
