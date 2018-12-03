@@ -18,7 +18,7 @@ Vagrant.configure("2") do |config|
       if prefix == "compute"
         hostname = "%s-%02d" % [prefix, (i+1)]
       else
-        hostname = "%s" % [prefix, (i+1)]
+        hostname = "%s" % prefix
       end
 
       config.vm.define "#{hostname}" do |box|
@@ -48,7 +48,12 @@ Vagrant.configure("2") do |config|
         end
 
         config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
-        config.vm.provision :shell, privileged: true, path: 'controller.sh'
+        config.vm.provision :shell, privileged: true, inline: "/sbin/ifdown eth1 && /sbin/ifup eth1"
+        config.vm.provision :shell, privileged: true, inline: "/sbin/ifdown eth2 && /sbin/ifup eth2"
+
+        if prefix == "controller"
+          config.vm.provision :shell, privileged: true, path: 'controller.sh'
+        end
       end
     end
   end
