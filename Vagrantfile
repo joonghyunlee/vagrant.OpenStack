@@ -4,7 +4,7 @@
 nodes = {
     'controller'  => [1, 200],
 #    'network'  => [1, 210],
-#    'compute' => [1, 220],
+    'compute' => [1, 220],
 }
 
 Vagrant.configure("2") do |config|
@@ -36,24 +36,20 @@ Vagrant.configure("2") do |config|
         box.vm.provider :virtualbox do |vbox|
           vbox.customize ["modifyvm", :id, "--cpus", 1]
           vbox.customize ["modifyvm", :id, "--memory", 1024]
-
           vbox.customize ["modifyvm", :id, "--nictype1", "virtio", "--nictype2", "virtio"]
 
-          if hostname == "compute" or hostname == "controller"
+          if prefix == "compute" or prefix == "controller"
             vbox.customize ["modifyvm", :id, "--cpus", 2]
             vbox.customize ["modifyvm", :id, "--memory", 2048]
           end
 
           vbox.customize ["modifyvm", :id, "--nicpromisc3", "allow-all"]
         end
-
-        config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
-        config.vm.provision :shell, privileged: true, inline: "/sbin/ifdown eth1 && /sbin/ifup eth1"
-        config.vm.provision :shell, privileged: true, inline: "/sbin/ifdown eth2 && /sbin/ifup eth2"
-
-        if prefix == "controller"
-          config.vm.provision :shell, privileged: true, path: 'controller.sh'
-        end
+        
+        box.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
+        box.vm.provision :shell, privileged: true, inline: "/sbin/ifdown eth1 && /sbin/ifup eth1"
+        box.vm.provision :shell, privileged: true, inline: "/sbin/ifdown eth2 && /sbin/ifup eth2"
+        box.vm.provision :shell, privileged: true, :path => "#{prefix}.sh"
       end
     end
   end

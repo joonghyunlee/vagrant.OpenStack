@@ -13,6 +13,8 @@
 export KEYSTONE_DB_PASS=TCjw-AuJ
 export GLANCE_DB_PASS=h4cD2D3B
 export GLANCE_USER_PASS=glance123!@#
+export NOVA_DB_PASS=pN5g-BRJ
+export NOVA_USER_PASS=nova123!@#
 export RABBITMQ_PASS=rabbitmq123!@#
 export MYSQL_ROOT_PASS=92n2ms7W
 
