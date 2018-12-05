@@ -3,7 +3,7 @@
 
 nodes = {
     'controller'  => [1, 200],
-#    'network'  => [1, 210],
+    'network'  => [1, 210],
     'compute' => [1, 220],
 }
 
@@ -29,9 +29,15 @@ Vagrant.configure("2") do |config|
           nic_type: "virtio"
         box.vm.network :private_network,
           virtualbox__intnet: true,
-          ip: "10.161.243.#{ip_start+i}",
+          ip: "10.0.0.#{ip_start+i}",
           :netmask => "255.255.255.0",
           nic_type: "virtio"
+        if prefix == "compute" or prefix == "network"
+          box.vm.network :private_network,
+            ip: "10.161.243.#{ip_start+i}",
+            :netmask => "255.255.255.0",
+            nic_type: "virtio"
+        end
 
         box.vm.provider :virtualbox do |vbox|
           vbox.customize ["modifyvm", :id, "--cpus", 1]
@@ -44,11 +50,18 @@ Vagrant.configure("2") do |config|
           end
 
           vbox.customize ["modifyvm", :id, "--nicpromisc3", "allow-all"]
+
+          if prefix == "compute" or prefix == "network"
+            vbox.customize ["modifyvm", :id, "--nicpromisc4", "allow-all"]
+          end
         end
         
         box.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
         box.vm.provision :shell, privileged: true, inline: "/sbin/ifdown eth1 && /sbin/ifup eth1"
         box.vm.provision :shell, privileged: true, inline: "/sbin/ifdown eth2 && /sbin/ifup eth2"
+        if prefix == "compute" or prefix == "network"
+          box.vm.provision :shell, privileged: true, inline: "/sbin/ifdown eth3 && /sbin/ifup eth3"
+        end
         box.vm.provision :shell, privileged: true, :path => "#{prefix}.sh"
       end
     end
