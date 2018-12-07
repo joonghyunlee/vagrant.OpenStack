@@ -59,3 +59,22 @@ su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --co
 
 systemctl enable neutron-server.service
 systemctl start neutron-server.service
+
+cat > /root/keystonerc << EOF
+export OS_USERNAME=admin
+export OS_PASSWORD=$ADMIN_USER_PASS
+export OS_PROJECT_NAME=admin
+export OS_USER_DOMAIN_NAME=Default
+export OS_PROJECT_DOMAIN_NAME=Default
+export OS_AUTH_URL=http://controller:35357/v3
+export OS_IDENTITY_API_VERSION=3
+export OS_IMAGE_API_VERSION=2
+EOF
+
+source /root/keystonerc
+
+neutron net-create public-network --router:external \
+    --provider:physical_network external --provider:network_type flat
+neutron subnet-create public-network 10.161.243.0/24 \
+    --allocation-pool start=10.161.243.100,end=10.161.243.199 \
+    --disable-dhcp --gateway 10.161.243.1

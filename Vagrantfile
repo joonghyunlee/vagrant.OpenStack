@@ -12,6 +12,12 @@ Vagrant.configure("2") do |config|
   config.ssh.password = "vagrant"
   config.ssh.insert_key = false
   #config.ssh.private_key_path = "pem/id_rsa"
+  
+  config.vm.provider :virtualbox do |vbox|
+    if !File.exist?("lvm.vmdk")
+      vbox.customize ["createmedium", "disk", "--filename", "lvm.vmdk", "--format", "vmdk", "--size", 1024 * 50]
+    end
+  end
 
   nodes.each do |prefix, (count, ip_start)|
     count.times do |i|
@@ -54,14 +60,21 @@ Vagrant.configure("2") do |config|
           if prefix == "compute" or prefix == "network"
             vbox.customize ["modifyvm", :id, "--nicpromisc4", "allow-all"]
           end
+
+          if prefix == "compute"
+              vbox.customize ["storageattach", :id, "--storagectl", "SATA Controller",
+                              "--port", 1, "--device", 0, "--type", "hdd", "--medium", "lvm.vmdk"]
+          end
         end
         
         box.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
         box.vm.provision :shell, privileged: true, inline: "/sbin/ifdown eth1 && /sbin/ifup eth1"
         box.vm.provision :shell, privileged: true, inline: "/sbin/ifdown eth2 && /sbin/ifup eth2"
+
         if prefix == "compute" or prefix == "network"
           box.vm.provision :shell, privileged: true, inline: "/sbin/ifdown eth3 && /sbin/ifup eth3"
         end
+
         box.vm.provision :shell, privileged: true, :path => "#{prefix}.sh"
       end
     end

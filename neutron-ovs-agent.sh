@@ -15,6 +15,9 @@ crudini --set /etc/neutron/plugin.ini securitygroup enable_security_group True
 crudini --set /etc/neutron/plugin.ini securitygroup enable_ipset True
 crudini --set /etc/neutron/plugin.ini securitygroup firewall_driver neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver
 
+rm -f /etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini
+ln -s /etc/neutron/plugin.ini /etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini
+
 ovs-vsctl add-br br-vlan
 ovs-vsctl add-port br-vlan eth2
 

@@ -10,9 +10,16 @@ crudini --set /etc/neutron/dhcp_agent.ini DEFAULT enable_isolated_metadata True
 crudini --set /etc/neutron/dhcp_agent.ini DEFAULT enable_metadata_network True
 crudini --set /etc/neutron/dhcp_agent.ini DEFAULT force_metadata True
 
-cat > /etc/neutron/dnsmasq-neutron.conf << EOF
+crudini --set /etc/neutron/plugin.ini ml2 type_drivers vlan,flat
+crudini --set /etc/neutron/plugin.ini ml2 tenant_network_types vlan
+crudini --set /etc/neutron/plugin.ini ml2 mechanism_drivers openvswitch,l2population
+crudini --set /etc/neutron/plugin.in ml2_type_vlan network_vlan_ranges external,vlan:301:3000
+
+cat > /etc/neutron/dnsmasq.conf << EOF
 dhcp-option-force=26,1454
 EOF
+
+chown root:neutron /etc/neutron/dnsmasq.conf
 
 pkill dnsmasq
 

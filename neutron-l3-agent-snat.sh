@@ -1,9 +1,23 @@
 #!/bin/bash
 
-sed -e 's/net.ipv4.ip_forward = 0/net.ipv4.ip_forward = 1/g' /etc/sysctl.conf
-sed -e 's/net.ipv4.conf.all.rp_filter = 1/net.ipv4.conf.all.rp_filter = 0/g' /etc/sysctl.conf
-sed -e 's/net.ipv4.conf.default.rp_filter = 1/net.ipv4.conf.default.rp_filter = 0/g' /etc/sysctl.conf
+echo 'net.ipv4.ip_forward = 1' >> /etc/sysctl.conf
+echo 'net.ipv4.conf.all.rp_filter = 0' >> /etc/sysctl.conf
+echo 'net.ipv4.conf.default.rp_filter = 0' >> /etc/sysctl.conf
 sysctl -p
+
+cat > /root/keystonerc << EOF
+export OS_USERNAME=admin
+export OS_PASSWORD=$ADMIN_USER_PASS
+export OS_PROJECT_NAME=admin
+export OS_USER_DOMAIN_NAME=Default
+export OS_PROJECT_DOMAIN_NAME=Default
+export OS_AUTH_URL=http://controller:35357/v3
+export OS_IDENTITY_API_VERSION=3
+export OS_IMAGE_API_VERSION=2
+EOF
+
+source /root/keystonerc
+PUBLIC_NET_ID=`neutron net-list | grep public-network | awk '{print $2}'`
 
 crudini --set /etc/neutron/neutron.conf DEFAULT rpc_backend rabbit
 crudini --set /etc/neutron/neutron.conf oslo_messaging_rabbit rabbit_host controller
@@ -23,7 +37,7 @@ crudini --set /etc/neutron/l3_agent.ini DEFAULT interface_driver neutron.agent.l
 crudini --set /etc/neutron/l3_agent.ini DEFAULT router_delete_namespaces True
 crudini --set /etc/neutron/l3_agent.ini DEFAULT use_namespaces True
 crudini --set /etc/neutron/l3_agent.ini DEFAULT external_network_bridge
-# crudini --set /etc/neutron/l3_agent.ini DEFAULT gateway_external_network_id
+crudini --set /etc/neutron/l3_agent.ini DEFAULT gateway_external_network_id $PUBLIC_NET_ID
 crudini --set /etc/neutron/l3_agent.ini DEFAULT verbose True
 crudini --set /etc/neutron/l3_agent.ini DEFAULT enable_metadata_proxy False
 crudini --set /etc/neutron/l3_agent.ini DEFAULT agent_mode dvr_snat

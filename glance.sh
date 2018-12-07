@@ -53,5 +53,5 @@ systemctl start openstack-glance-api.service openstack-glance-registry.service
 source /root/keystonerc
 wget -P /tmp/images http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img
 glance image-create --name "cirros-0.3.4-x86_64" --file /tmp/images/cirros-0.3.4-x86_64-disk.img \
-    --disk-format qcow2 --container-format bare --visibility public
+    --disk-format qcow2 --container-format bare --visibility public --progress
 rm -rf /tmp/images
