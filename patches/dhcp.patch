@@ -1,0 +1,36 @@
+diff -urN neutron/agent/dhcp/config.py neutron_new/agent/dhcp/config.py
+--- neutron/agent/dhcp/config.py	2018-12-07 21:22:56.021905688 -0500
++++ neutron_new/agent/dhcp/config.py	2018-12-07 21:24:04.782363863 -0500
+@@ -28,6 +28,7 @@
+                 help=_("Allows for serving metadata requests from a "
+                        "dedicated network. Requires "
+                        "enable_isolated_metadata = True")),
++    cfg.BoolOpt('force_metadata', default=False),
+     cfg.IntOpt('num_sync_threads', default=4,
+                help=_('Number of threads to use during sync process.'))
+ ]
+diff -urN neutron/agent/linux/dhcp.py neutron_new/agent/linux/dhcp.py
+--- neutron/agent/linux/dhcp.py	2018-12-07 21:22:56.057905928 -0500
++++ neutron_new/agent/linux/dhcp.py	2018-12-07 21:24:52.320680577 -0500
+@@ -700,8 +700,9 @@
+ 
+             # Add host routes for isolated network segments
+ 
+-            if (isolated_subnets[subnet.id] and
+-                    self.conf.enable_isolated_metadata and
++            if ((self.conf.force_metadata or
++                    (isolated_subnets[subnet.id] and
++                    self.conf.enable_isolated_metadata)) and
+                     subnet.ip_version == 4):
+                 subnet_dhcp_ip = subnet_to_interface_ip[subnet.id]
+                 host_routes.append(
+@@ -861,6 +862,9 @@
+         providing access to the metadata service via logical routers built
+         with 3rd party backends.
+         """
++        if conf.force_metadata:
++            return True
++
+         if conf.enable_metadata_network and conf.enable_isolated_metadata:
+             # check if the network has a metadata subnet
+             meta_cidr = netaddr.IPNetwork(METADATA_DEFAULT_CIDR)

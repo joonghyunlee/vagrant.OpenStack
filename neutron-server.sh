@@ -36,6 +36,8 @@ crudini --set /etc/neutron/neutron.conf DEFAULT service_plugins router
 crudini --set /etc/neutron/neutron.conf DEFAULT allow_overlapping_ips True
 crudini --set /etc/neutron/neutron.conf DEFAULT notify_nova_on_port_status_changes True
 crudini --set /etc/neutron/neutron.conf DEFAULT notify_nova_on_port_data_changes True
+crudini --set /etc/neutron/neutron.conf DEFAULT router_distributed True
+crudini --set /etc/neutron/neutron.conf DEFAULT dvr_base_mac fa:16:3f:00:00:00
 crudini --set /etc/neutron/neutron.conf DEFAULT nova_url http://controller:8774/v2
 crudini --set /etc/neutron/neutron.conf nova auth_url http://controller:35357
 crudini --set /etc/neutron/neutron.conf nova auth_plugin password
@@ -59,17 +61,6 @@ su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --co
 
 systemctl enable neutron-server.service
 systemctl start neutron-server.service
-
-cat > /root/keystonerc << EOF
-export OS_USERNAME=admin
-export OS_PASSWORD=$ADMIN_USER_PASS
-export OS_PROJECT_NAME=admin
-export OS_USER_DOMAIN_NAME=Default
-export OS_PROJECT_DOMAIN_NAME=Default
-export OS_AUTH_URL=http://controller:35357/v3
-export OS_IDENTITY_API_VERSION=3
-export OS_IMAGE_API_VERSION=2
-EOF
 
 source /root/keystonerc
 

@@ -4,6 +4,7 @@ mysql -u root -p"$MYSQL_ROOT_PASS" -sN -e "CREATE DATABASE cinder;"
 mysql -u root -p"$MYSQL_ROOT_PASS" -sN -e "GRANT ALL PRIVILEGES ON cinder.* TO 'cinder'@'localhost' IDENTIFIED BY '$CINDER_DB_PASS';"
 mysql -u root -p"$MYSQL_ROOT_PASS" -sN -e "GRANT ALL PRIVILEGES ON cinder.* TO 'cinder'@'%' IDENTIFIED BY '$CINDER_DB_PASS';"
 
+export OS_TENANT_ID=`openstack project show admin | grep " id " | awk '{print $4}'`
 openstack user create --password $CINDER_USER_PASS cinder
 openstack role add --project service --user cinder admin
 openstack service create --name cinder \
@@ -22,11 +23,15 @@ openstack endpoint create \
     --adminurl "http://controller:8776/v2/%(tenant_id)s" \
     --region RegionOne \
     volumev2
-
+# openstack endpoint create --region RegionOne --enable volume public "http://controller:8776/v2/%(tenant_id)s"
+# openstack endpoint create --region RegionOne --enable volume internal "http://controller:8776/v2/%(tenant_id)s"
+# openstack endpoint create --region RegionOne --enable volume admin "http://controller:8776/v2/%(tenant_id)s"
+# 
+# openstack endpoint create --region RegionOne --enable volumev2 public "http://controller:8776/v2/%(tenant_id)s"
+# openstack endpoint create --region RegionOne --enable volumev2 internal "http://controller:8776/v2/%(tenant_id)s"
+# openstack endpoint create --region RegionOne --enable volumev2 admin "http://controller:8776/v2/%(tenant_id)s"
 
 yum install -y openstack-cinder python-cinderclient python-oslo-db
-
-yum install openstack-cinder python-cinderclient python-oslo-db
 chown -R cinder:cinder /etc/cinder/cinder.conf
 
 crudini --set /etc/cinder/cinder.conf database connection "mysql://cinder:$CINDER_DB_PASS@controller/cinder"

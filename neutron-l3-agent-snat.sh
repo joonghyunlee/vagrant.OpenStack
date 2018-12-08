@@ -39,8 +39,13 @@ crudini --set /etc/neutron/l3_agent.ini DEFAULT use_namespaces True
 crudini --set /etc/neutron/l3_agent.ini DEFAULT external_network_bridge
 crudini --set /etc/neutron/l3_agent.ini DEFAULT gateway_external_network_id $PUBLIC_NET_ID
 crudini --set /etc/neutron/l3_agent.ini DEFAULT verbose True
-crudini --set /etc/neutron/l3_agent.ini DEFAULT enable_metadata_proxy False
+crudini --set /etc/neutron/l3_agent.ini DEFAULT debug True
 crudini --set /etc/neutron/l3_agent.ini DEFAULT agent_mode dvr_snat
+
+crudini --set /etc/neutron/plugin.ini ml2 type_drivers vlan,flat
+crudini --set /etc/neutron/plugin.ini ml2 tenant_network_types vlan
+crudini --set /etc/neutron/plugin.ini ml2 mechanism_drivers openvswitch,l2population
+crudini --set /etc/neutron/plugin.ini ml2_type_vlan network_vlan_ranges external,vlan:301:3000
 
 systemctl enable neutron-l3-agent.service
 systemctl start neutron-l3-agent.service

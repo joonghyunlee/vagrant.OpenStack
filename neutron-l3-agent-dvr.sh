@@ -1,5 +1,6 @@
 #!/bin/bash
 
+echo 'net.ipv4.ip_forward = 1' >> /etc/sysctl.conf
 echo 'net.ipv4.conf.all.rp_filter = 0' >> /etc/sysctl.conf
 echo 'net.ipv4.conf.default.rp_filter = 0' >> /etc/sysctl.conf
 echo 'net.bridge.bridge-nf-call-iptables = 1' >> /etc/sysctl.conf
@@ -29,6 +30,7 @@ crudini --set /etc/neutron/l3_agent.ini DEFAULT router_delete_namespaces True
 crudini --set /etc/neutron/l3_agent.ini DEFAULT external_network_bridge
 crudini --set /etc/neutron/l3_agent.ini DEFAULT gateway_external_network_id
 crudini --set /etc/neutron/l3_agent.ini DEFAULT verbose True
+crudini --set /etc/neutron/l3_agent.ini DEFAULT debug True
 crudini --set /etc/neutron/l3_agent.ini DEFAULT enable_metadata_proxy False
 crudini --set /etc/neutron/l3_agent.ini DEFAULT agent_mode dvr
 

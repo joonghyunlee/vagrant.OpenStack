@@ -14,6 +14,9 @@ openstack endpoint create \
     --adminurl http://controller:9292 \
     --region RegionOne \
     image
+# openstack endpoint create --region RegionOne --enable image public "http://controller:9292"
+# openstack endpoint create --region RegionOne --enable image internal "http://controller:9292"
+# openstack endpoint create --region RegionOne --enable image admin "http://controller:9292"
 
 yum install -y openstack-glance python-glance python-glanceclient
 
@@ -49,9 +52,3 @@ su -s /bin/sh -c "glance-manage db_sync" glance
 
 systemctl enable openstack-glance-api.service openstack-glance-registry.service
 systemctl start openstack-glance-api.service openstack-glance-registry.service
-
-source /root/keystonerc
-wget -P /tmp/images http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img
-glance image-create --name "cirros-0.3.4-x86_64" --file /tmp/images/cirros-0.3.4-x86_64-disk.img \
-    --disk-format qcow2 --container-format bare --visibility public --progress
-rm -rf /tmp/images

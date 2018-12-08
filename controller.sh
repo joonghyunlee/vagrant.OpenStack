@@ -6,5 +6,5 @@ source /vagrant/rabbitmq.sh
 source /vagrant/keystone.sh
 source /vagrant/glance.sh
 source /vagrant/nova-api.sh
-source /vagrant/neutron-server.sh
 source /vagrant/cinder-api.sh
+source /vagrant/neutron-server.sh

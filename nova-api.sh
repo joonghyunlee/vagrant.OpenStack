@@ -15,6 +15,10 @@ openstack endpoint create \
     --region RegionOne \
     compute
 
+# openstack endpoint create --region RegionOne --enable compute public "http://controller:8774/v2/%(tenant_id)s"
+# openstack endpoint create --region RegionOne --enable compute internal "http://controller:8774/v2/%(tenant_id)s"
+# openstack endpoint create --region RegionOne --enable compute admin "http://controller:8774/v2/%(tenant_id)s"
+
 yum install -y openstack-nova-api openstack-nova-cert openstack-nova-conductor \
     openstack-nova-console openstack-nova-novncproxy openstack-nova-scheduler python-novaclient
 
