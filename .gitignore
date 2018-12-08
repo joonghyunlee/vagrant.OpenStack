@@ -1,5 +1,12 @@
 .vagrant/
 pem/
+tmp/
+rgloader/
+data/
+gems/
+boxes/
 *.box
 *.iso
 *.vmdk
+insecure_private_key
+setup_version
