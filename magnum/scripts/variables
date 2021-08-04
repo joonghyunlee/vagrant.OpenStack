@@ -1,0 +1,5 @@
+#!/bin/bash
+
+export RABBITMQ_PASS="openstack123"
+export MYSQL_ROOT_PASS="123qwe!@#"
+export MAGNUM_DB_PASS="New1234!"

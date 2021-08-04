@@ -1,0 +1,47 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+['vagrant-hostmanager'].each do |plugin|
+  unless Vagrant.has_plugin?(plugin)
+    raise "#{plugin} plugin not found. Please install it via 'vagrant plugin install #{plugin}'"
+  end
+end
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "bento/centos-7"
+  
+  config.hostmanager.enabled = true
+  config.hostmanager.manage_host = false
+
+  config.vm.synced_folder "./scripts", "/home/vagrant/scripts"
+  config.vm.synced_folder "./config", "/home/vagrant/config"
+
+  config.vm.define "magnum-api" do |api|
+      api.vm.hostname= "magnum-api"
+      api.vm.network "private_network", ip: "10.0.0.20"
+
+      api.vm.provider :virtualbox do |vbox|
+          vbox.cpus = 2
+          vbox.memory = 2048
+      end
+
+      api.vm.provision :shell, :path => "scripts/common.sh"
+      api.vm.provision :shell, :path => "scripts/rabbitmq.sh"
+      api.vm.provision :shell, :path => "scripts/mariadb.sh"
+      api.vm.provision :shell, :path => "scripts/magnum-api.sh"
+  end
+  
+  config.vm.define "magnum-conductor" do |conductor|
+      conductor.vm.hostname= "magnum-conductor"
+      conductor.vm.network "private_network", ip: "10.0.0.21"
+
+      conductor.vm.provider :virtualbox do |vbox|
+          vbox.cpus = 1
+          vbox.memory = 2048
+      end
+      
+      conductor.vm.provision :shell, :path => "scripts/common.sh"
+      conductor.vm.provision :shell, :path => "scripts/magnum-conductor.sh"
+  end
+
+end

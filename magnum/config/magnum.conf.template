@@ -1,0 +1,142 @@
+[DEFAULT]
+pybasedir = /usr/lib/python2.7/site-packages/magnum
+bindir = /usr/bin
+state_path = /var/lib/magnum
+periodic_enable = true
+periodic_interval_max = 60
+host = ${MY_IP} 
+debug = true
+log_dir = /var/log/magnum
+default_log_levels = amqp=WARN,amqplib=WARN,boto=WARN,qpid=WARN,sqlalchemy=WARN,suds=INFO,oslo.messaging=INFO,oslo_messaging=INFO,iso8601=WARN,requests.packages.urllib3.connectionpool=WARN,urllib3.connectionpool=WARN,websocket=WARN,requests.packages.urllib3.util.retry=WARN,urllib3.util.retry=WARN,keystonemiddleware=WARN,routes.middleware=WARN,stevedore=WARN,taskflow=WARN,keystoneauth=WARN,oslo.cache=INFO,oslo_policy=INFO,dogpile.core.dogpile=INFO,oslo_service.periodic_task=INFO,magnum.service.periodic=INFO,magnum.servicegroup.magnum_service_periodic=INFO,heatclient.common.http=DEBUG,barbicanclient=WARN,kubernetes.client.rest=INFO
+publish_errors = true
+transport_url = rabbit://openstack:openstack123@magnum-api:5672
+control_exchange = magnum-dev
+[api]
+port = 9511
+host = ${API_IP}
+max_limit = 1000
+api_paste_config = api-paste.ini
+workers = 1 
+[barbican_client]
+region_name = RegionOne
+[certificates]
+cert_manager_type = barbican
+[cinder]
+default_etcd_volume_type = 'General SSD'
+default_boot_volume_type = 'General HDD'
+default_boot_volume_size = 30
+[cinder_client]
+region_name = RegionOne
+[cluster]
+nodes_affinity_policy = anti-affinity
+[cluster_heat]
+wait_interval = 30
+create_timeout = 15
+[cluster_template]
+[conductor]
+topic = magnum-conductor-dev
+[cors]
+[database]
+connection = mysql+pymysql://magnum:${MAGNUM_DB_PASS}@magnum-api:3306/magnum
+[docker]
+[docker_registry]
+[drivers]
+disabled_drivers = k8s_coreos_v1,k8s_fedora_atomic_v1,k8s_fedora_coreos_v1,k8s_fedora_ironic_v1,mesos_ubuntu_v1,swarm_fedora_atomic_v1,swarm_fedora_atomic_v2 
+[glance_client]
+region_name = RegionOne
+[heat_client]
+region_name = RegionOne
+[keystone_auth]
+auth_type = password
+auth_url = http://alp-keystone.iaas.tcc1.cloud.toastoven.net:35357/v3
+project_name = service
+project_domain_id = default
+username = magnum
+user_domain_id = default
+password = Hu1HtluXrA
+[keystone_authtoken]
+project_domain_id = default
+project_name = service
+user_domain_id = default
+username = magnum
+password = Hu1HtluXrA
+auth_url = http://alp-keystone.iaas.tcc1.cloud.toastoven.net:35357/v3
+auth_type = password
+www_authenticate_uri = http://alp-keystone.iaas.tcc1.cloud.toastoven.net:35357/v3
+auth_version = v3
+region_name = RegionOne
+memcached_servers = localhost:11211
+[kubernetes]
+[magnum_client]
+region_name = RegionOne
+[neutron_client]
+region_name = RegionOne
+[nova_client]
+region_name = RegionOne
+[octavia_client]
+[oslo_concurrency]
+lock_path = /var/lib/magnum/tmp
+[oslo_messaging_amqp]
+[oslo_messaging_kafka]
+[oslo_messaging_notifications]
+driver = messagingv2
+transport_url = rabbit://openstack:${RABBITMQ_PASS}@magnum-api:5672
+topics = pike-notifications
+[oslo_messaging_rabbit]
+[oslo_policy]
+[profiler]
+enabled = false
+[quotas]
+max_clusters_per_project = 3
+max_workernodegroups_per_cluster = 3
+[trust]
+cluster_user_trust = true
+trustee_domain_name = magnum
+trustee_domain_admin_name = magnum_domain_admin
+trustee_domain_admin_password = Kx4ZcYU7hy
+trustee_keystone_interface = public
+trustee_keystone_region_name = RegionOne
+[x509]
+[toast]
+link_local_auth_url = http://169.254.169.241/v3
+link_local_magnum_url = http://169.254.169.247:9511/v1
+link_local_etcd_url = http://169.254.169.248:2379
+etcd_servers = http://etcd01.k8s.toastoven.net:2379,http://etcd02.k8s.toastoven.net:2379,http://etcd03.k8s.toastoven.net:2379
+etcd_ca_file = /etc/magnum/certs/etcd/ca.pem
+etcd_cert_file = /etc/magnum/certs/etcd/client.pem
+etcd_key_file = /etc/magnum/certs/etcd/client-key.pem
+etcd_namespace_prefix = tks-
+etcd_volume_size=10
+master_project_name_prefix = kubernetes-
+master_vpc_name = k8s_master_vpc
+master_vpc_cidr = 198.18.0.0/15
+master_subnet_name = k8s_master_subnet
+master_subnet_cidr = 198.18.0.0/15
+master_flavor_id = b5f1c148-732c-417d-9d1b-1dffca105dbe
+master_flavor_id_wmi = b5f1c148-732c-417d-9d1b-1dffca105dbe
+master_image_id = e84287c6-0b49-4724-b7ce-a97e5009deab
+master_image_id_wmi = fbfedba2-6612-4d91-b10d-798e373f94be
+master_lb_fip_disabled_cloud_types = WMI_FLAT
+user_lb_fip_disabled_cloud_types = WMI_FLAT
+master_count = 3
+master_keypair = tksalphakey
+user_template_name_prefix = tks_user_template_for_cluster_
+dnsplus_appkey = ruVmFtYqwxCtl20D
+dnsplus_endpoint = https://api-dnsplus.cloud.toast.com/dnsplus/v1.0
+dnsplus_zone_id = f7bddfa9-5b9e-4739-8646-3e8270de1fc6
+dnsplus_domain_name = container.cloud.toastoven.net
+dnsplus_recordset_type = A
+dnsplus_ttl = 60
+region_name = KR1
+env_name = alp
+service_name = k8s
+etcd_private_discovery = true
+metricbeat_kafka_address = 169.254.169.249:9093,169.254.169.249:9094,169.254.169.249:9095
+metricbeat_kafka_address_wmi = "kafka01.iaas.tcc1.cloud.toastoven.net:9092,kafka02.iaas.tcc1.cloud.toastoven.net:9092,kafka03.iaas.tcc1.cloud.toastoven.net:9092,kafka04.iaas.tcc1.cloud.toastoven.net:9092,kafka05.iaas.tcc1.cloud.toastoven.net:9092"
+infra_registry_address = alp-pri-k8sreg.toastoven.net
+infra_registry_user = admin
+infra_registry_password = admin123
+wmi_flat_etcd_volume_type = 'General HDD'
+cab_url = http://10.162.150.47:20002
+cab_admin_uuid = 9f5b78b3-d45d-4af2-8977-63f207af831e
+cab_organization_mappings = NORMAL:CNHCc17UbudBDQ1D
